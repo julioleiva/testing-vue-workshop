@@ -16,7 +16,7 @@ Además de las pruebas unitarias, hay varios otros tipos de pruebas que puedes r
 
 3. **Pruebas de aceptación del usuario (UAT)**: Estas pruebas se llevan a cabo con la finalidad de verificar si el sistema cumple o no con los requisitos del usuario.
 
-## Roles y responsabilidades (TDD)
+## Roles y responsabilidades
 
 1. **QATester (Quality Assurance Tester)**: Un QATester es responsable de garantizar la calidad del software antes de que se entregue al usuario final. Esto implica una variedad de tareas, incluyendo la creación y ejecución de planes de prueba, la identificación y documentación de defectos, y la colaboración con los desarrolladores para solucionar problemas. Los QATesters también pueden estar involucrados en la revisión de los requisitos del software para asegurarse de que son claros y testables. El tipo de pruebas que realizan los QATesters puede variar, pero a menudo incluye pruebas funcionales, pruebas de regresión, pruebas de usabilidad y pruebas de aceptación del usuario.
 
@@ -25,16 +25,6 @@ Además de las pruebas unitarias, hay varios otros tipos de pruebas que puedes r
 3. **e2e tester (End-to-End Tester)**: Un e2e tester se centra en las pruebas de extremo a extremo, que evalúan el funcionamiento del sistema completo, desde el principio hasta el final, para asegurarse de que el flujo de trabajo completo del sistema funciona como se espera. Esto puede implicar interactuar con el software de la misma manera que lo haría un usuario final, y verificar que el software se comporte correctamente en respuesta a estas interacciones.
 
 4. **Integration tester**: Un Integration tester se centra en las pruebas de integración, que verifican que los diferentes componentes del software funcionan correctamente juntos. Esto puede implicar probar la interacción entre diferentes partes del software, como módulos o servicios, o entre el software y otros sistemas o servicios externos. Las pruebas de integración pueden ayudar a identificar problemas que no se detectan en las pruebas unitarias, como problemas de comunicación entre componentes o problemas con servicios externos.
-
-
-## Test-Driven Development (TDD)
-
-El Desarrollo Guiado por Pruebas (TDD) es una metodología de desarrollo de software que se basa en repetir un ciclo corto de desarrollo. Primero, el desarrollador escribe una prueba automatizada que define una mejora de la funcionalidad o un nuevo requisito. Luego produce el código mínimo necesario para pasar esa prueba, y finalmente refina el código nuevo para cumplir con los estándares.
-
-El TDD promueve la escritura de código simple, claro y que cumpla con los requisitos, además de ayudar a reducir el tiempo de depuración y aumentar la calidad del software.
-
-En esta charla taller, nos centraremos en las pruebas unitarias pero no emplearemos la metodología TDD aplicadas a los componentes de Vue3.
-
 
 # Vitest: Un marco de pruebas unitarias increíblemente rápido
 
@@ -106,9 +96,97 @@ Un ejemplo simple sería configurar un entorno Jest y Babel para una aplicación
 
 Después de eso, necesitarías un jest.config.js y un babel.config.js para completar la configuración.
 
-Con Vitest, no tienes que instalar esas dependencias extra. Todo lo que necesitas es un archivo vite.config.js o vitest.config.js. Incluso para proyectos no Vite, es un solo archivo para configurar. Por ejemplo:
+Con Vitest, no tienes que instalar esas dependencias extra. Todo lo que necesitas es un archivo vite.config.js o vitest.config.js.
+
+
+## Cobertura de los test y flujo de trabajo
+
+La cobertura de las pruebas es una medida cuantitativa que muestra qué porcentaje de nuestro código está siendo probado. Nos ayuda a identificar las partes de nuestro código que no han sido probadas y, por lo tanto, podrían contener errores no detectados. Aunque no es recomendable buscar una cobertura del 100% (ya que algunas partes del código pueden ser difíciles de probar o no justificar los costos de las pruebas), tener una cobertura alta puede aumentar la confianza en la calidad y la fiabilidad del código.
+
+Por ejemplo, si tenemos una cobertura del 70%, significa que el 70% de nuestro código está cubierto por pruebas unitarias. Este nivel de cobertura indica que gran parte de nuestro código ha sido probado y validado.
+
+En un flujo de trabajo de Integración Continua (CI, por sus siglas en inglés), se ejecutan automáticamente pruebas unitarias cada vez que se hace un commit a la base de código. Esto permite detectar y corregir errores más rápidamente. Además, las herramientas de CI a menudo incluyen una manera de medir la cobertura de las pruebas y pueden fallar una build si la cobertura cae por debajo de un cierto umbral.
+
+Supongamos que tenemos un proyecto con las siguientes pruebas y código:
 
 ```javascript
-import { defineConfig } from 'vitest/config';
+// calculator.js
+export default class Calculator {
+  add(a, b) {
+    return a + b;
+  }
+  
+  subtract(a, b) {
+    return a - b;
+  }
+  
+  multiply(a, b) {
+    return a * b;
+  }
+  
+  divide(a, b) {
+    if (b === 0) {
+      throw new Error('Cannot divide by zero');
+    }
+    return a / b;
+  }
+}
 
-export default
+// calculator.test.js
+import Calculator from '../calculator';
+
+test('adds two numbers', () => {
+  const calculator = new Calculator();
+  expect(calculator.add(1, 2)).toBe(3);
+});
+
+test('subtracts two numbers', () => {
+  const calculator = new Calculator();
+  expect(calculator.subtract(3, 2)).toBe(1);
+});
+```
+
+En este caso, estamos probando los métodos add y subtract, pero no multiply y divide. Si cada método tiene aproximadamente la misma cantidad de código, entonces nuestra cobertura de pruebas es del 50% (2 de 4 métodos están probados). Para llegar al 70% de cobertura, necesitaríamos añadir pruebas para al menos uno de los métodos que falta.
+## EL FICHERO VITEST.CONFIG.JS
+
+Este es un archivo de configuración para Vitest, una herramienta de pruebas unitarias para Vite. Aquí está el desglose de las partes clave:
+
+1. `import { fileURLToPath } from 'node:url'`: Importa una utilidad de Node.js para convertir una URL de archivo en una ruta de archivo.
+
+2. `import { mergeConfig } from 'vite'`: Importa una función de Vite para combinar dos configuraciones en una.
+
+3. `import { configDefaults, defineConfig } from 'vitest/config'`: Importa dos utilidades de Vitest. `configDefaults` es el objeto de configuración por defecto de Vitest y `defineConfig` es una función para definir una configuración personalizada.
+
+4. `import viteConfig from './vite.config'`: Importa la configuración existente de Vite de tu proyecto.
+
+5. `export default mergeConfig(...)`: Exporta la configuración combinada de Vitest y Vite.
+
+Ahora vamos a desglosar la sección `defineConfig`:
+
+- `test`: Define la configuración para las pruebas de Vitest.
+  - `environment: 'jsdom'`: Define que el entorno de pruebas será 'jsdom', que es una implementación de JavaScript del modelo de objetos de documento (DOM) estándar de la web.
+  - `exclude: [...configDefaults.exclude, 'e2e/*']`: Excluye ciertos archivos o directorios de las pruebas. Aquí, se está excluyendo el directorio 'e2e' y cualquier otro archivo o directorio excluido por defecto en la configuración de Vitest.
+  - `root: fileURLToPath(new URL('./', import.meta.url))`: Define la raíz del directorio de pruebas. Aquí, se está utilizando el directorio del archivo de configuración actual como raíz.
+  - `transformMode: { web: [/\.[jt]sx$/] }`: Configura Vitest para transformar archivos con extensiones .jsx y .tsx cuando se están ejecutando pruebas en un entorno web.
+  - `coverage: { provider: 'v8', reporter: ['text', 'json', 'html'] }`: Configura la cobertura de código para usar el proveedor 'v8' y emitir informes en formato de texto, JSON y HTML.
+
+Por último, la configuración personalizada se combina con la configuración existente de Vite utilizando `mergeConfig`, y se exporta el resultado. Esto permite a Vitest utilizar la configuración existente de Vite y añadir su propia configuración adicional para las pruebas.
+
+
+## ENLACES DE INTERÉS
+
+
+- [Vitest: A Unit Test Framework](https://uploadcare.com/blog/vitest-unit-test-framework/)
+
+
+- [How to Mock Fetch API with Vitest](https://runthatline.com/how-to-mock-fetch-api-with-vitest/)
+
+- [Start Testing with Vitest: Beginner's Guide](https://vueschool.io/articles/vuejs-tutorials/start-testing-with-vitest-beginners-guide/)
+
+- [Getting Started with Vitest](https://medium.com/vue-mastery/getting-started-with-vitest-4897d153b41f)
+
+- [Vitest Documentation](https://vitest.dev/)
+
+
+- [Vue Test Utils: What is Vue Test Utils?](https://test-utils.vuejs.org/guide/#what-is-vue-test-utils)
+

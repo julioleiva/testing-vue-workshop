@@ -8,7 +8,7 @@ describe('useFetch', () => {
     fetchMock.reset()
   })
 
-  it('realiza una solicitud y maneja la respuesta correctamente', async () => {
+  it('makes a request and handles the response correctly', async () => {
     fetchMock.mock('https://randomuser.me/api/', { data: 'test data' })
 
     const { data, error, loading } = await useFetch('https://randomuser.me/api/')
@@ -20,7 +20,7 @@ describe('useFetch', () => {
     expect(error.value).toBe(null)
   })
 
-  it('maneja los errores correctamente', async () => {
+  it('handles errors correctly', async () => {
     fetchMock.mock('https://randomuser.me/api/', 500)
 
     const { data, error, loading } = await useFetch('https://randomuser.me/api/')
