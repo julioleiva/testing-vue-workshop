@@ -1,3 +1,14 @@
+## Taller de unit testing con JS impartido el 28 de junio:
+Además de este README, a lo largo del proyecto podréis encontrar otros más específicos:
+
+1. [TDD](https://github.com/julioleiva/testing-vue-workshop/blob/master/src/TDD/README.md) (Explicación del paradigma TDD con ejemplos prácticos)
+2. [Tesing App.vue](https://github.com/julioleiva/testing-vue-workshop/blob/master/src/__tests__/README.md) (Testeando Router + Pinia)
+3. [Testeando composables](https://github.com/julioleiva/testing-vue-workshop/blob/master/src/composables/__tests__/README.md) (Testeo de llamadas fetch + hook beforeEach + nextTick)
+4. [Testeando Stores](https://github.com/julioleiva/testing-vue-workshop/blob/master/src/stores/__tests__/README.md)(Cómo testear un store creado con Pinia)
+
+---
+
+
 # Pruebas en JavaScript, con un enfoque en el testing de componentes en Vue3
 
 ## Introducción al Unit Testing
